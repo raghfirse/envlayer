@@ -27,6 +27,11 @@ func (r Result) Error() string {
 	return fmt.Sprintf("missing required keys: %s", strings.Join(r.Missing, ", "))
 }
 
+// HasWarnings returns true when there is at least one warning in the result.
+func (r Result) HasWarnings() bool {
+	return len(r.Warnings) > 0
+}
+
 // Validate checks that every key listed in required is present and non-empty
 // in env. It also appends a warning for any key whose value is an empty string
 // even when the key is not required.
