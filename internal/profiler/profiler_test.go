@@ -115,3 +115,31 @@ func TestDelete_MissingProfile_ReturnsError(t *testing.T) {
 		t.Fatal("expected error deleting nonexistent profile, got nil")
 	}
 }
+
+func TestSave_OverwritesExistingProfile(t *testing.T) {
+	dir := tempDir(t)
+
+	if err := profiler.Save(dir, "myprofile", map[string]string{"KEY": "original"}); err != nil {
+		t.Fatalf("Save (initial): %v", err)
+	}
+	if err := profiler.Save(dir, "myprofile", map[string]string{"KEY": "updated"}); err != nil {
+		t.Fatalf("Save (overwrite): %v", err)
+	}
+
+	p, err := profiler.Load(dir, "myprofile")
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if p.Vars["KEY"] != "updated" {
+		t.Errorf("KEY: got %q, want %q", p.Vars["KEY"], "updated")
+	}
+
+	// Ensure only one profile exists after overwrite.
+	names, err := profiler.List(dir)
+	if err != nil {
+		t.Fatalf("List: %v", err)
+	}
+	if len(names) != 1 {
+		t.Errorf("expected 1 profile after overwrite, got %d: %v", len(names), names)
+	}
+}
