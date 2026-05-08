@@ -9,7 +9,14 @@
 // StageUppercaseKeys, StageFilterPrefix) wrap existing envlayer packages so
 // that common operations can be composed without boilerplate.
 //
-// Example:
+// # Stage Ordering
+//
+// Stages are executed in the order they are added via Add. The output map of
+// each stage is passed as the input map to the next stage. If any stage
+// returns an error, execution halts and the error is returned immediately;
+// no subsequent stages are run.
+//
+// # Example
 //
 //	p := pipeline.New().
 //		Add(pipeline.StageInterpolate(base)).
@@ -17,4 +24,9 @@
 //		Add(pipeline.StageMask(nil, ""))
 //
 //	result, err := p.Run(vars)
+//
+// # Error Handling
+//
+// Run returns the first error encountered along with a nil map. Callers
+// should always check the returned error before using the result map.
 package pipeline
