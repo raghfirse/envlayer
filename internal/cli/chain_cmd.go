@@ -78,6 +78,9 @@ func RunChainFromArgs(args []string) error {
 		return fmt.Errorf("usage: envlayer chain <file1,file2,...> [key]")
 	}
 	files := chainFlagFiles(args[0])
+	if len(files) == 0 {
+		return fmt.Errorf("chain: no valid file paths provided in %q", args[0])
+	}
 	key := ""
 	if len(args) >= 2 {
 		key = args[1]
