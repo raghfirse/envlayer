@@ -63,3 +63,18 @@ func RenderFile(tmpl string, vars map[string]string, opts Options, write func(st
 	}
 	return write(out)
 }
+
+// RenderMany renders multiple templates using the same vars and options,
+// returning a slice of results in the same order as the input templates.
+// The first render error encountered halts execution and is returned.
+func RenderMany(tmpls []string, vars map[string]string, opts Options) ([]string, error) {
+	results := make([]string, 0, len(tmpls))
+	for i, tmpl := range tmpls {
+		out, err := Render(tmpl, vars, opts)
+		if err != nil {
+			return nil, fmt.Errorf("templater: template %d: %w", i, err)
+		}
+		results = append(results, out)
+	}
+	return results, nil
+}
