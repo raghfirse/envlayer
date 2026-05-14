@@ -62,3 +62,23 @@ func TestLoadFiles_MissingFileReturnsError(t *testing.T) {
 		t.Fatal("expected error for missing file")
 	}
 }
+
+func TestLoadFiles_LaterFileOverridesAllPreviousValues(t *testing.T) {
+	dir := t.TempDir()
+
+	first := filepath.Join(dir, ".env")
+	second := filepath.Join(dir, ".env.local")
+	third := filepath.Join(dir, ".env.production")
+
+	writeTempEnv(t, first, "KEY=first\n")
+	writeTempEnv(t, second, "KEY=second\n")
+	writeTempEnv(t, third, "KEY=third\n")
+
+	result, err := loader.LoadFiles([]string{first, second, third})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result["KEY"] != "third" {
+		t.Errorf("expected KEY=third (last file wins), got %q", result["KEY"])
+	}
+}
