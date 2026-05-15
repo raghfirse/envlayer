@@ -47,6 +47,16 @@ func LoadFile(path string) (EnvMap, error) {
 	return env, nil
 }
 
+// ToEnv converts an EnvMap to a slice of "KEY=VALUE" strings suitable
+// for use with os/exec.Cmd.Env or os.Environ().
+func (e EnvMap) ToEnv() []string {
+	pairs := make([]string, 0, len(e))
+	for k, v := range e {
+		pairs = append(pairs, k+"="+v)
+	}
+	return pairs
+}
+
 // parseLine splits a single KEY=VALUE line into its components.
 func parseLine(line string) (string, string, error) {
 	idx := strings.IndexByte(line, '=')
