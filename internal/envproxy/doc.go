@@ -13,4 +13,12 @@
 //
 // The primary map is copied on construction so mutations to the original map
 // do not affect the proxy.
+//
+// Lookup semantics:
+//
+//  1. If the key exists in the primary map, its value is returned immediately
+//     (even if the value is an empty string).
+//  2. Otherwise, FallbackFunc is called with the key. If FallbackFunc is nil,
+//     Get returns ("", ErrNotFound).
+//  3. If FallbackFunc returns ok=false, Get returns ("", ErrNotFound).
 package envproxy
